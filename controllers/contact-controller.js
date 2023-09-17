@@ -1,52 +1,49 @@
-import contacts from "../models/contacts-models.js";
 import { HttpError } from "../helpers/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
 
+import Contact from "../models/Contact.js";
+
 const getAllContacts = async (req, res) => {
-	const result = await contacts.listContacts();
-	if (!result) {
-		throw HttpError(404, "Not found");
-	}
+	const result = await Contact.find({}, "name email phone favorite");
 	res.status(200).json(result);
+};
+
+const addContact = async (req, res) => {
+	const result = await Contact.create(req.body);
+	res.status(201).json(result);
 };
 
 const getContactById = async (req, res) => {
 	const contactId = req.params.contactId;
-	const result = await contacts.getContactById(contactId);
+	const result = await Contact.findById(contactId);
 	if (!result) {
 		throw HttpError(404, `Contact id=${contactId} is not found`);
 	}
 	res.status(200).json(result);
 };
 
-const addContact = async (req, res) => {
-	const result = await contacts.addContact(req.body);
-	console.log(result);
-	res.status(201).json(result);
-};
-
-const deleteContact = async (req, res) => {
-	const contactId = req.params.contactId;
-	const result = await contacts.removeContact(contactId);
-	if (!result) {
-		throw HttpError(404, "Not found");
-	}
-	res.status(200).send().json({ message: "Contact removed" });
-};
-
 const updateContact = async (req, res) => {
 	const contactId = req.params.contactId;
-	const result = await contacts.updateContact(contactId, req.body);
+	const result = await Contact.findByIdAndUpdate(contactId, req.body, { new: true });
 	if (!result) {
-		throw HttpError(404, "Not found");
+		throw HttpError(404, `Contact id=${contactId} not found`);
 	}
 	res.status(200).json(result);
 };
 
+const deleteContact = async (req, res) => {
+	const contactId = req.params.contactId;
+	const result = await Contact.findByIdAndDelete(contactId);
+	if (!result) {
+		throw HttpError(404, "Not found!");
+	}
+	res.status(200).json({ message: "Contact removed" });
+};
+
 export default {
 	getAllContacts: ctrlWrapper(getAllContacts),
-	getContactById: ctrlWrapper(getContactById),
 	addContact: ctrlWrapper(addContact),
+	getContactById: ctrlWrapper(getContactById),
 	updateContact: ctrlWrapper(updateContact),
 	deleteContact: ctrlWrapper(deleteContact),
 };
