@@ -1,12 +1,9 @@
 import { Router } from "express";
 
 import contactController from "../../controllers/contact-controller.js";
-
-import * as contactSchemas from "../../models/Contact.js";
-
 import { validateBody } from "../../decorators/index.js";
-
 import { isValidId } from "../../middlewares/index.js";
+import contactSchemas from "../../Schemas/contact-schemas.js";
 
 const router = Router();
 
