@@ -1,11 +1,14 @@
 import { Router } from "express";
 
-import contactController from "../../controllers/contact-controller.js";
 import { validateBody } from "../../decorators/index.js";
-import { isValidId } from "../../middlewares/index.js";
+import { authenticate, isValidId } from "../../middlewares/index.js";
+
 import contactSchemas from "../../Schemas/contact-schemas.js";
+import contactController from "../../controllers/contact-controller.js";
 
 const router = Router();
+
+router.use(authenticate);
 
 const contactAddValidate = validateBody(contactSchemas.contactAddShcema);
 const contactUpdateFavoriteValidate = validateBody(contactSchemas.contactUpdateFavoriteSchema);
